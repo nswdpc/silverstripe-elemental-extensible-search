@@ -1,5 +1,5 @@
 {
-    "name": "silverstripe-elemental-extensible-search",
+    "name": "nswdpc/silverstripe-elemental-extensible-search",
     "description": "Extensible search for Elemental.",
     "type": "silverstripe-vendormodule",
     "keywords": [
