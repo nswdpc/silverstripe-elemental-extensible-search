@@ -39,7 +39,8 @@ class ElementalExtensibleSearch extends BaseElement
     ];
 
     private static $has_one = [
-        'Image' => Image::class
+        'Image' => Image::class,
+        'SearchPage' => ExtensibleSearchPage::class
     ];
 
     private static $many_many = [
@@ -115,8 +116,8 @@ class ElementalExtensibleSearch extends BaseElement
     }
 
     public function getSearchPage() {
-        $pages = ExtensibleSearchPage::get();
-        return $pages->first();
+        $page = $this->SearchPage();
+        return $page;
     }
 
 }
