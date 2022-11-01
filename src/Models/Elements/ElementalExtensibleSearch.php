@@ -12,48 +12,98 @@ use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 
 /**
- * ElementalExtensibleSearch adds an search field
+ * ElementalExtensibleSearch provides a content block with a search field
+ * Using an extensible search page as configuration
+ *
+ * @author Mark
+ * @author James
  */
 class ElementalExtensibleSearch extends BaseElement
 {
+
+    /**
+     * @inheritdoc
+     */
     private static $icon = "font-icon-search";
 
+    /**
+     * @inheritdoc
+     */
     private static $table_name = "ElementalExtensibleSearch";
 
+    /**
+     * @inheritdoc
+     */
     private static $title = "Search";
+
+    /**
+     * @inheritdoc
+     */
     private static $description = "Display an search block";
 
+    /**
+     * @inheritdoc
+     */
     private static $singular_name = "Search";
+
+    /**
+     * @inheritdoc
+     */
     private static $plural_name = "Searches";
 
+    /**
+     * @inheritdoc
+     */
     private static $inline_editable = false;
 
+    /**
+     * @inheritdoc
+     */
     public function getType()
     {
         return _t(__CLASS__ . ".BlockType", "Search");
     }
 
+    /**
+     * @inheritdoc
+     */
     private static $db = [
         'Subtitle' => 'Varchar(255)',
         'ShowTerms' => 'Boolean'
     ];
 
+    /**
+     * @inheritdoc
+     */
     private static $has_one = [
         'Image' => Image::class,
         'SearchPage' => ExtensibleSearchPage::class
     ];
 
+    /**
+     * @inheritdoc
+     */
     private static $many_many = [
         'SearchLinks' => Link::class
     ];
 
+    /**
+     * @inheritdoc
+     */
     private static $many_many_extraFields = [
         'SearchLinks' => ['SortOrder' => 'Int']
 
     ];
+
+    /**
+     * @inheritdoc
+     */
     private static $owns = ['Image'];
 
-    public function getAllowedFileTypes()
+    /**
+     * Allowed file types for image relation
+     */
+    public function getAllowedFileTypes() : array
     {
         $types = $this->config()->get("allowed_file_types");
         if (empty($types)) {
@@ -63,7 +113,10 @@ class ElementalExtensibleSearch extends BaseElement
         return $types;
     }
 
-    public function getFolderName() {
+    /**
+     * Folder to store images
+     */
+    public function getFolderName() : string {
         $folder_name = $this->config()->get('folder_name');
         if(!$folder_name) {
             $folder_name = "images";
@@ -71,6 +124,9 @@ class ElementalExtensibleSearch extends BaseElement
         return $folder_name;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getCMSFields()
     {
 
@@ -111,11 +167,17 @@ class ElementalExtensibleSearch extends BaseElement
         return parent::getCMSFields();
     }
 
-    public function getElementSearchForm($request = null, $sorting = false) {
+    /**
+     * Return search form (or not)
+     */
+    public function getElementSearchForm($request = null, $sorting = false) : ?Form {
         return ($page = $this->getSearchPage()) ? ModelAsController::controller_for($page)->getSearchForm($request, $sorting) : null;
     }
 
-    public function getSearchPage() {
+    /**
+     * Return search page, if set
+     */
+    public function getSearchPage() : ?ExtensibleSearchPage {
         $page = $this->SearchPage();
         return $page;
     }
