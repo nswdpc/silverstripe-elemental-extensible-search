@@ -1,0 +1,13 @@
+nglasl\extensible\ExtensibleSearchPage:
+  searchpage:
+    Title: 'Search Page'
+    ShowTitle: 1
+    SearchEngine: 'NSWDPC\Elemental\Models\ExtensibleSearch\Tests\TestCustomSearchEngine'
+NSWDPC\Elemental\Models\ExtensibleSearch\ElementalExtensibleSearch:
+  elementwithsearchpage:
+    Title: 'Search Element'
+    Subtitle: 'Subtitle of element'
+    SearchPage: '=>nglasl\extensible\ExtensibleSearchPage.searchpage'
+  elementwithnosearchpage:
+    Title: 'Search Element with no search page'
+    Subtitle: 'Subtitle of element with no search page'
