@@ -6,6 +6,7 @@ use nglasl\extensible\ExtensibleSearchPage;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use gorriecoe\Link\Models\Link;
 use gorriecoe\LinkField\LinkField;
+use SilverStripe\CMS\Search\SearchForm;
 use Silverstripe\Forms\CheckboxField;
 use Silverstripe\Forms\TextField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
@@ -170,8 +171,17 @@ class ElementalExtensibleSearch extends BaseElement
     /**
      * Return search form (or not)
      */
-    public function getElementSearchForm($request = null, $sorting = false) : ?Form {
-        return ($page = $this->getSearchPage()) ? ModelAsController::controller_for($page)->getSearchForm($request, $sorting) : null;
+    public function getElementSearchForm($request = null, $sorting = false) : ?SearchForm {
+        $page = $this->getSearchPage();
+        if(!$page) {
+            return null;
+        }
+        $searchForm = ModelAsController::controller_for($page)->getSearchForm($request, $sorting);
+        if( !($searchForm instanceof SearchForm) ) {
+            return null;
+        } else {
+            return $searchForm;
+        }
     }
 
     /**
@@ -179,7 +189,7 @@ class ElementalExtensibleSearch extends BaseElement
      */
     public function getSearchPage() : ?ExtensibleSearchPage {
         $page = $this->SearchPage();
-        return $page;
+        return $page && $page->exists() ? $page : null;
     }
 
 }
