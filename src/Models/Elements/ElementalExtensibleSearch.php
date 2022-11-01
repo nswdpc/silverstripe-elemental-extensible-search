@@ -1,4 +1,5 @@
 <?php
+
 namespace NSWDPC\Elemental\Models\ExtensibleSearch;
 
 use DNADesign\Elemental\Models\BaseElement;
@@ -117,9 +118,10 @@ class ElementalExtensibleSearch extends BaseElement
     /**
      * Folder to store images
      */
-    public function getFolderName() : string {
+    public function getFolderName() : string
+    {
         $folder_name = $this->config()->get('folder_name');
-        if(!$folder_name) {
+        if (!$folder_name) {
             $folder_name = "images";
         }
         return $folder_name;
@@ -130,7 +132,6 @@ class ElementalExtensibleSearch extends BaseElement
      */
     public function getCMSFields()
     {
-
         $this->beforeUpdateCMSFields(function ($fields) {
             $fields->removeByName(['SearchLinks']);
             $fields->addFieldsToTab("Root.Main", [
@@ -171,13 +172,14 @@ class ElementalExtensibleSearch extends BaseElement
     /**
      * Return search form (or not)
      */
-    public function getElementSearchForm($request = null, $sorting = false) : ?SearchForm {
+    public function getElementSearchForm($request = null, $sorting = false) : ?SearchForm
+    {
         $page = $this->getSearchPage();
-        if(!$page) {
+        if (!$page) {
             return null;
         }
         $searchForm = ModelAsController::controller_for($page)->getSearchForm($request, $sorting);
-        if( !($searchForm instanceof SearchForm) ) {
+        if (!($searchForm instanceof SearchForm)) {
             return null;
         } else {
             return $searchForm;
@@ -187,10 +189,9 @@ class ElementalExtensibleSearch extends BaseElement
     /**
      * Return search page, if set
      */
-    public function getSearchPage() : ?ExtensibleSearchPage {
+    public function getSearchPage() : ?ExtensibleSearchPage
+    {
         $page = $this->SearchPage();
         return $page && $page->exists() ? $page : null;
     }
-
 }
-
