@@ -3,18 +3,20 @@
 namespace NSWDPC\Elemental\Models\ExtensibleSearch;
 
 use DNADesign\Elemental\Models\BaseElement;
-use nglasl\extensible\ExtensibleSearchPage;
-use SilverStripe\CMS\Controllers\ModelAsController;
 use gorriecoe\Link\Models\Link;
 use gorriecoe\LinkField\LinkField;
-use SilverStripe\CMS\Search\SearchForm;
+use nglasl\extensible\ExtensibleSearchPage;
 use Silverstripe\Forms\CheckboxField;
 use Silverstripe\Forms\TextField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\Image;
 
 /**
- * ElementalExtensibleSearch provides a content block with a search field
+ * ElementalExtensibleSearch provides a content block with a search field,
+ * linked to an {@link nglasl\extensible\ExtensibleSearchPage}
+ *
+ * This search element can be decorated with links, optional terms and images
+ *
  * Using an extensible search page as configuration
  *
  * @author Mark
@@ -22,6 +24,8 @@ use SilverStripe\Assets\Image;
  */
 class ElementalExtensibleSearch extends BaseElement
 {
+
+    use SearchElement;
 
     /**
      * @inheritdoc
@@ -63,7 +67,10 @@ class ElementalExtensibleSearch extends BaseElement
      */
     public function getType()
     {
-        return _t(__CLASS__ . ".BlockType", "Search");
+        return _t(
+            __CLASS__ . ".BlockType",
+            "Search"
+        );
     }
 
     /**
@@ -93,55 +100,44 @@ class ElementalExtensibleSearch extends BaseElement
      * @inheritdoc
      */
     private static $many_many_extraFields = [
-        'SearchLinks' => ['SortOrder' => 'Int']
-
+        'SearchLinks' => [
+            'SortOrder' => 'Int'
+        ]
     ];
 
     /**
      * @inheritdoc
      */
-    private static $owns = ['Image'];
+    private static $owns = [
+        'Image'
+    ];
 
-    /**
-     * Allowed file types for image relation
-     */
-    public function getAllowedFileTypes() : array
-    {
-        $types = $this->config()->get("allowed_file_types");
-        if (empty($types)) {
-            $types = ["jpg", "jpeg", "gif", "png", "webp"];
-        }
-        $types = array_unique($types);
-        return $types;
-    }
-
-    /**
-     * Folder to store images
-     */
-    public function getFolderName() : string
-    {
-        $folder_name = $this->config()->get('folder_name');
-        if (!$folder_name) {
-            $folder_name = "images";
-        }
-        return $folder_name;
-    }
 
     /**
      * @inheritdoc
      */
     public function getCMSFields()
     {
-        $this->beforeUpdateCMSFields(function ($fields) {
-            $fields->removeByName(['SearchLinks']);
-            $fields->addFieldsToTab("Root.Main", [
+        $fields = parent::getCMSFields();
+        $fields->removeByName(['SearchLinks']);
+        $fields->addFieldsToTab(
+            "Root.Main",
+            [
+
                 TextField::create(
                     "Subtitle",
-                    _t(__CLASS__ . ".SUBTITLE", "Subtitle")
+                    _t(
+                        __CLASS__ . ".SUBTITLE",
+                    "Subtitle"
+                    )
                 ),
+
                 UploadField::create(
                     "Image",
-                    _t(__CLASS__ . ".SLIDE_IMAGE", "Image")
+                    _t(
+                        __CLASS__ . ".SLIDE_IMAGE",
+                       "Image"
+                    )
                 )
                 ->setFolderName($this->getFolderName() . "/" . $this->ID)
                 ->setAllowedExtensions($this->getAllowedFileTypes())
@@ -155,43 +151,31 @@ class ElementalExtensibleSearch extends BaseElement
                         ]
                     )
                 ),
+
                 CheckboxField::create(
                     "ShowTerms",
-                    _t(__CLASS__ . ".SUBTITLE", "Show search terms")
-                )->setDescription('Show approved search terms below the search field (adding search links below will override this)'),
+                    _t(
+                        __CLASS__ . ".SHOW_SEARCH_TERMS",
+                       "Show search terms"
+                    )
+                )->setDescription(
+                    _t(
+                        __CLASS__ . ".SHOW_SEARCH_TERMS_DESCRIPTION",
+                        'Show approved search terms below the search field (adding search links below will override this)'
+                    )
+                ),
+
                 LinkField::create(
                     "SearchLinks",
-                    _t(__CLASS__ . ".SEARCHLINKS", "Search links"),
+                    _t(
+                        __CLASS__ . ".SEARCHLINKS",
+                       "Search links"
+                    ),
                     $this->owner
                 )->setSortColumn('SortOrder')
-            ]);
-        });
-        return parent::getCMSFields();
+            ]
+        );
+        return $fields;
     }
 
-    /**
-     * Return search form (or not)
-     */
-    public function getElementSearchForm($request = null, $sorting = false) : ?SearchForm
-    {
-        $page = $this->getSearchPage();
-        if (!$page) {
-            return null;
-        }
-        $searchForm = ModelAsController::controller_for($page)->getSearchForm($request, $sorting);
-        if (!($searchForm instanceof SearchForm)) {
-            return null;
-        } else {
-            return $searchForm;
-        }
-    }
-
-    /**
-     * Return search page, if set
-     */
-    public function getSearchPage() : ?ExtensibleSearchPage
-    {
-        $page = $this->SearchPage();
-        return $page && $page->exists() ? $page : null;
-    }
 }
