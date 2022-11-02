@@ -4,6 +4,7 @@ namespace NSWDPC\Elemental\Models\ExtensibleSearch;
 
 use DNADesign\Elemental\Models\BaseElement;
 use nglasl\extensible\ExtensibleSearchPage;
+use SilverStripe\Assets\Image;
 
 /**
  * Simple search element, from which other search elements can be based,
@@ -37,7 +38,7 @@ class ElementalExtensibleSimpleSearch extends BaseElement
     /**
      * @inheritdoc
      */
-    private static $description = "Display a search block";
+    private static $description = "Display a search field that can be decorated with optional content";
 
     /**
      * @inheritdoc
@@ -57,7 +58,16 @@ class ElementalExtensibleSimpleSearch extends BaseElement
     /**
      * @inheritdoc
      */
+    private static $db = [
+        'Content' => 'Text',
+        'FieldTitle' => 'Varchar(255)'
+    ];
+
+    /**
+     * @inheritdoc
+     */
     private static $has_one = [
+        'Image' => Image::class,
         'SearchPage' => ExtensibleSearchPage::class
     ];
 
