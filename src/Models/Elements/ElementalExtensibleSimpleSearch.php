@@ -74,6 +74,13 @@ class ElementalExtensibleSimpleSearch extends BaseElement
     /**
      * @inheritdoc
      */
+    private static $owns = [
+        'Image'
+    ];
+
+    /**
+     * @inheritdoc
+     */
     public function getType()
     {
         return _t(
